@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server')
 const { prisma } = require('./prisma/generated/prisma-client')
+const createGame = require('./resolvers/Mutation/createGame')
 
 const typeDefs = gql`
   type Query {
@@ -37,16 +38,7 @@ const resolvers = {
     },
   },
   Mutation: {
-    createGame(root, args, context) {
-      return context.prisma.createGame(
-        {
-          players: {
-            create: args.players,
-          }
-        },
-
-      )
-    },
+    createGame,
   },
 }
 
