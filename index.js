@@ -10,6 +10,13 @@ const typeDefs = gql`
   type Game {
     id: ID!
     players: [Player!]!
+    spaces: [Space!]!
+  }
+
+  type Space {
+    id: ID!
+    index: Int!
+    players: [Player!]!
   }
 
   type Player {
@@ -35,6 +42,11 @@ const resolvers = {
       return context.prisma.game({
         id: root.id
       }).players()
+    },
+    spaces(root, args, context) {
+      return context.prisma.game({
+        id: root.id
+      }).spaces()
     },
   },
   Mutation: {
