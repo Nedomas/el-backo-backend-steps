@@ -1,4 +1,10 @@
-type User {
+type Game {
+  id: ID! @unique
+  players: [Player!]!
+}
+
+type Player {
   id: ID! @unique
   name: String!
+  game: Game!
 }
