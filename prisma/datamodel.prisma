@@ -1,10 +1,19 @@
 type Game {
   id: ID! @unique
   players: [Player!]!
+  spaces: [Space!]!
 }
 
 type Player {
   id: ID! @unique
   name: String!
   game: Game!
+  space: Space
+}
+
+type Space {
+  id: ID! @unique
+  index: Int!
+  game: Game!
+  players: [Player!]!
 }

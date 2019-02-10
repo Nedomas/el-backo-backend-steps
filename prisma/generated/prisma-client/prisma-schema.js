@@ -7,6 +7,10 @@ type AggregatePlayer {
   count: Int!
 }
 
+type AggregateSpace {
+  count: Int!
+}
+
 type BatchPayload {
   count: Long!
 }
@@ -14,6 +18,7 @@ type BatchPayload {
 type Game {
   id: ID!
   players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player!]
+  spaces(where: SpaceWhereInput, orderBy: SpaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Space!]
 }
 
 type GameConnection {
@@ -24,10 +29,25 @@ type GameConnection {
 
 input GameCreateInput {
   players: PlayerCreateManyWithoutGameInput
+  spaces: SpaceCreateManyWithoutGameInput
 }
 
 input GameCreateOneWithoutPlayersInput {
+  create: GameCreateWithoutPlayersInput
   connect: GameWhereUniqueInput
+}
+
+input GameCreateOneWithoutSpacesInput {
+  create: GameCreateWithoutSpacesInput
+  connect: GameWhereUniqueInput
+}
+
+input GameCreateWithoutPlayersInput {
+  spaces: SpaceCreateManyWithoutGameInput
+}
+
+input GameCreateWithoutSpacesInput {
+  players: PlayerCreateManyWithoutGameInput
 }
 
 type GameEdge {
@@ -68,10 +88,39 @@ input GameSubscriptionWhereInput {
 
 input GameUpdateInput {
   players: PlayerUpdateManyWithoutGameInput
+  spaces: SpaceUpdateManyWithoutGameInput
 }
 
 input GameUpdateOneRequiredWithoutPlayersInput {
+  create: GameCreateWithoutPlayersInput
+  update: GameUpdateWithoutPlayersDataInput
+  upsert: GameUpsertWithoutPlayersInput
   connect: GameWhereUniqueInput
+}
+
+input GameUpdateOneRequiredWithoutSpacesInput {
+  create: GameCreateWithoutSpacesInput
+  update: GameUpdateWithoutSpacesDataInput
+  upsert: GameUpsertWithoutSpacesInput
+  connect: GameWhereUniqueInput
+}
+
+input GameUpdateWithoutPlayersDataInput {
+  spaces: SpaceUpdateManyWithoutGameInput
+}
+
+input GameUpdateWithoutSpacesDataInput {
+  players: PlayerUpdateManyWithoutGameInput
+}
+
+input GameUpsertWithoutPlayersInput {
+  update: GameUpdateWithoutPlayersDataInput!
+  create: GameCreateWithoutPlayersInput!
+}
+
+input GameUpsertWithoutSpacesInput {
+  update: GameUpdateWithoutSpacesDataInput!
+  create: GameCreateWithoutSpacesInput!
 }
 
 input GameWhereInput {
@@ -92,6 +141,9 @@ input GameWhereInput {
   players_every: PlayerWhereInput
   players_some: PlayerWhereInput
   players_none: PlayerWhereInput
+  spaces_every: SpaceWhereInput
+  spaces_some: SpaceWhereInput
+  spaces_none: SpaceWhereInput
   AND: [GameWhereInput!]
   OR: [GameWhereInput!]
   NOT: [GameWhereInput!]
@@ -115,6 +167,12 @@ type Mutation {
   upsertPlayer(where: PlayerWhereUniqueInput!, create: PlayerCreateInput!, update: PlayerUpdateInput!): Player!
   deletePlayer(where: PlayerWhereUniqueInput!): Player
   deleteManyPlayers(where: PlayerWhereInput): BatchPayload!
+  createSpace(data: SpaceCreateInput!): Space!
+  updateSpace(data: SpaceUpdateInput!, where: SpaceWhereUniqueInput!): Space
+  updateManySpaces(data: SpaceUpdateManyMutationInput!, where: SpaceWhereInput): BatchPayload!
+  upsertSpace(where: SpaceWhereUniqueInput!, create: SpaceCreateInput!, update: SpaceUpdateInput!): Space!
+  deleteSpace(where: SpaceWhereUniqueInput!): Space
+  deleteManySpaces(where: SpaceWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -138,6 +196,7 @@ type Player {
   id: ID!
   name: String!
   game: Game!
+  space: Space
 }
 
 type PlayerConnection {
@@ -149,6 +208,7 @@ type PlayerConnection {
 input PlayerCreateInput {
   name: String!
   game: GameCreateOneWithoutPlayersInput!
+  space: SpaceCreateOneWithoutPlayersInput
 }
 
 input PlayerCreateManyWithoutGameInput {
@@ -156,8 +216,19 @@ input PlayerCreateManyWithoutGameInput {
   connect: [PlayerWhereUniqueInput!]
 }
 
+input PlayerCreateManyWithoutSpaceInput {
+  create: [PlayerCreateWithoutSpaceInput!]
+  connect: [PlayerWhereUniqueInput!]
+}
+
 input PlayerCreateWithoutGameInput {
   name: String!
+  space: SpaceCreateOneWithoutPlayersInput
+}
+
+input PlayerCreateWithoutSpaceInput {
+  name: String!
+  game: GameCreateOneWithoutPlayersInput!
 }
 
 type PlayerEdge {
@@ -236,6 +307,7 @@ input PlayerSubscriptionWhereInput {
 input PlayerUpdateInput {
   name: String
   game: GameUpdateOneRequiredWithoutPlayersInput
+  space: SpaceUpdateOneWithoutPlayersInput
 }
 
 input PlayerUpdateManyDataInput {
@@ -258,6 +330,18 @@ input PlayerUpdateManyWithoutGameInput {
   updateMany: [PlayerUpdateManyWithWhereNestedInput!]
 }
 
+input PlayerUpdateManyWithoutSpaceInput {
+  create: [PlayerCreateWithoutSpaceInput!]
+  delete: [PlayerWhereUniqueInput!]
+  connect: [PlayerWhereUniqueInput!]
+  set: [PlayerWhereUniqueInput!]
+  disconnect: [PlayerWhereUniqueInput!]
+  update: [PlayerUpdateWithWhereUniqueWithoutSpaceInput!]
+  upsert: [PlayerUpsertWithWhereUniqueWithoutSpaceInput!]
+  deleteMany: [PlayerScalarWhereInput!]
+  updateMany: [PlayerUpdateManyWithWhereNestedInput!]
+}
+
 input PlayerUpdateManyWithWhereNestedInput {
   where: PlayerScalarWhereInput!
   data: PlayerUpdateManyDataInput!
@@ -265,6 +349,12 @@ input PlayerUpdateManyWithWhereNestedInput {
 
 input PlayerUpdateWithoutGameDataInput {
   name: String
+  space: SpaceUpdateOneWithoutPlayersInput
+}
+
+input PlayerUpdateWithoutSpaceDataInput {
+  name: String
+  game: GameUpdateOneRequiredWithoutPlayersInput
 }
 
 input PlayerUpdateWithWhereUniqueWithoutGameInput {
@@ -272,10 +362,21 @@ input PlayerUpdateWithWhereUniqueWithoutGameInput {
   data: PlayerUpdateWithoutGameDataInput!
 }
 
+input PlayerUpdateWithWhereUniqueWithoutSpaceInput {
+  where: PlayerWhereUniqueInput!
+  data: PlayerUpdateWithoutSpaceDataInput!
+}
+
 input PlayerUpsertWithWhereUniqueWithoutGameInput {
   where: PlayerWhereUniqueInput!
   update: PlayerUpdateWithoutGameDataInput!
   create: PlayerCreateWithoutGameInput!
+}
+
+input PlayerUpsertWithWhereUniqueWithoutSpaceInput {
+  where: PlayerWhereUniqueInput!
+  update: PlayerUpdateWithoutSpaceDataInput!
+  create: PlayerCreateWithoutSpaceInput!
 }
 
 input PlayerWhereInput {
@@ -308,6 +409,7 @@ input PlayerWhereInput {
   name_ends_with: String
   name_not_ends_with: String
   game: GameWhereInput
+  space: SpaceWhereInput
   AND: [PlayerWhereInput!]
   OR: [PlayerWhereInput!]
   NOT: [PlayerWhereInput!]
@@ -324,12 +426,224 @@ type Query {
   player(where: PlayerWhereUniqueInput!): Player
   players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player]!
   playersConnection(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlayerConnection!
+  space(where: SpaceWhereUniqueInput!): Space
+  spaces(where: SpaceWhereInput, orderBy: SpaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Space]!
+  spacesConnection(where: SpaceWhereInput, orderBy: SpaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SpaceConnection!
   node(id: ID!): Node
+}
+
+type Space {
+  id: ID!
+  index: Int!
+  game: Game!
+  players(where: PlayerWhereInput, orderBy: PlayerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Player!]
+}
+
+type SpaceConnection {
+  pageInfo: PageInfo!
+  edges: [SpaceEdge]!
+  aggregate: AggregateSpace!
+}
+
+input SpaceCreateInput {
+  index: Int!
+  game: GameCreateOneWithoutSpacesInput!
+  players: PlayerCreateManyWithoutSpaceInput
+}
+
+input SpaceCreateManyWithoutGameInput {
+  create: [SpaceCreateWithoutGameInput!]
+  connect: [SpaceWhereUniqueInput!]
+}
+
+input SpaceCreateOneWithoutPlayersInput {
+  create: SpaceCreateWithoutPlayersInput
+  connect: SpaceWhereUniqueInput
+}
+
+input SpaceCreateWithoutGameInput {
+  index: Int!
+  players: PlayerCreateManyWithoutSpaceInput
+}
+
+input SpaceCreateWithoutPlayersInput {
+  index: Int!
+  game: GameCreateOneWithoutSpacesInput!
+}
+
+type SpaceEdge {
+  node: Space!
+  cursor: String!
+}
+
+enum SpaceOrderByInput {
+  id_ASC
+  id_DESC
+  index_ASC
+  index_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SpacePreviousValues {
+  id: ID!
+  index: Int!
+}
+
+input SpaceScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  index: Int
+  index_not: Int
+  index_in: [Int!]
+  index_not_in: [Int!]
+  index_lt: Int
+  index_lte: Int
+  index_gt: Int
+  index_gte: Int
+  AND: [SpaceScalarWhereInput!]
+  OR: [SpaceScalarWhereInput!]
+  NOT: [SpaceScalarWhereInput!]
+}
+
+type SpaceSubscriptionPayload {
+  mutation: MutationType!
+  node: Space
+  updatedFields: [String!]
+  previousValues: SpacePreviousValues
+}
+
+input SpaceSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: SpaceWhereInput
+  AND: [SpaceSubscriptionWhereInput!]
+  OR: [SpaceSubscriptionWhereInput!]
+  NOT: [SpaceSubscriptionWhereInput!]
+}
+
+input SpaceUpdateInput {
+  index: Int
+  game: GameUpdateOneRequiredWithoutSpacesInput
+  players: PlayerUpdateManyWithoutSpaceInput
+}
+
+input SpaceUpdateManyDataInput {
+  index: Int
+}
+
+input SpaceUpdateManyMutationInput {
+  index: Int
+}
+
+input SpaceUpdateManyWithoutGameInput {
+  create: [SpaceCreateWithoutGameInput!]
+  delete: [SpaceWhereUniqueInput!]
+  connect: [SpaceWhereUniqueInput!]
+  set: [SpaceWhereUniqueInput!]
+  disconnect: [SpaceWhereUniqueInput!]
+  update: [SpaceUpdateWithWhereUniqueWithoutGameInput!]
+  upsert: [SpaceUpsertWithWhereUniqueWithoutGameInput!]
+  deleteMany: [SpaceScalarWhereInput!]
+  updateMany: [SpaceUpdateManyWithWhereNestedInput!]
+}
+
+input SpaceUpdateManyWithWhereNestedInput {
+  where: SpaceScalarWhereInput!
+  data: SpaceUpdateManyDataInput!
+}
+
+input SpaceUpdateOneWithoutPlayersInput {
+  create: SpaceCreateWithoutPlayersInput
+  update: SpaceUpdateWithoutPlayersDataInput
+  upsert: SpaceUpsertWithoutPlayersInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: SpaceWhereUniqueInput
+}
+
+input SpaceUpdateWithoutGameDataInput {
+  index: Int
+  players: PlayerUpdateManyWithoutSpaceInput
+}
+
+input SpaceUpdateWithoutPlayersDataInput {
+  index: Int
+  game: GameUpdateOneRequiredWithoutSpacesInput
+}
+
+input SpaceUpdateWithWhereUniqueWithoutGameInput {
+  where: SpaceWhereUniqueInput!
+  data: SpaceUpdateWithoutGameDataInput!
+}
+
+input SpaceUpsertWithoutPlayersInput {
+  update: SpaceUpdateWithoutPlayersDataInput!
+  create: SpaceCreateWithoutPlayersInput!
+}
+
+input SpaceUpsertWithWhereUniqueWithoutGameInput {
+  where: SpaceWhereUniqueInput!
+  update: SpaceUpdateWithoutGameDataInput!
+  create: SpaceCreateWithoutGameInput!
+}
+
+input SpaceWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  index: Int
+  index_not: Int
+  index_in: [Int!]
+  index_not_in: [Int!]
+  index_lt: Int
+  index_lte: Int
+  index_gt: Int
+  index_gte: Int
+  game: GameWhereInput
+  players_every: PlayerWhereInput
+  players_some: PlayerWhereInput
+  players_none: PlayerWhereInput
+  AND: [SpaceWhereInput!]
+  OR: [SpaceWhereInput!]
+  NOT: [SpaceWhereInput!]
+}
+
+input SpaceWhereUniqueInput {
+  id: ID
 }
 
 type Subscription {
   game(where: GameSubscriptionWhereInput): GameSubscriptionPayload
   player(where: PlayerSubscriptionWhereInput): PlayerSubscriptionPayload
+  space(where: SpaceSubscriptionWhereInput): SpaceSubscriptionPayload
 }
 `
       }

@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export interface Exists {
   game: (where?: GameWhereInput) => Promise<boolean>;
   player: (where?: PlayerWhereInput) => Promise<boolean>;
+  space: (where?: SpaceWhereInput) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -83,6 +84,29 @@ export interface Prisma {
       last?: Int;
     }
   ) => PlayerConnectionPromise;
+  space: (where: SpaceWhereUniqueInput) => SpacePromise;
+  spaces: (
+    args?: {
+      where?: SpaceWhereInput;
+      orderBy?: SpaceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<Space>;
+  spacesConnection: (
+    args?: {
+      where?: SpaceWhereInput;
+      orderBy?: SpaceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => SpaceConnectionPromise;
   node: (args: { id: ID_Output }) => Node;
 
   /**
@@ -118,6 +142,22 @@ export interface Prisma {
   ) => PlayerPromise;
   deletePlayer: (where: PlayerWhereUniqueInput) => PlayerPromise;
   deleteManyPlayers: (where?: PlayerWhereInput) => BatchPayloadPromise;
+  createSpace: (data: SpaceCreateInput) => SpacePromise;
+  updateSpace: (
+    args: { data: SpaceUpdateInput; where: SpaceWhereUniqueInput }
+  ) => SpacePromise;
+  updateManySpaces: (
+    args: { data: SpaceUpdateManyMutationInput; where?: SpaceWhereInput }
+  ) => BatchPayloadPromise;
+  upsertSpace: (
+    args: {
+      where: SpaceWhereUniqueInput;
+      create: SpaceCreateInput;
+      update: SpaceUpdateInput;
+    }
+  ) => SpacePromise;
+  deleteSpace: (where: SpaceWhereUniqueInput) => SpacePromise;
+  deleteManySpaces: (where?: SpaceWhereInput) => BatchPayloadPromise;
 
   /**
    * Subscriptions
@@ -133,6 +173,9 @@ export interface Subscription {
   player: (
     where?: PlayerSubscriptionWhereInput
   ) => PlayerSubscriptionPayloadSubscription;
+  space: (
+    where?: SpaceSubscriptionWhereInput
+  ) => SpaceSubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -148,6 +191,16 @@ export type PlayerOrderByInput =
   | "id_DESC"
   | "name_ASC"
   | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type SpaceOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "index_ASC"
+  | "index_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -197,6 +250,7 @@ export interface PlayerWhereInput {
   name_ends_with?: String;
   name_not_ends_with?: String;
   game?: GameWhereInput;
+  space?: SpaceWhereInput;
   AND?: PlayerWhereInput[] | PlayerWhereInput;
   OR?: PlayerWhereInput[] | PlayerWhereInput;
   NOT?: PlayerWhereInput[] | PlayerWhereInput;
@@ -220,17 +274,57 @@ export interface GameWhereInput {
   players_every?: PlayerWhereInput;
   players_some?: PlayerWhereInput;
   players_none?: PlayerWhereInput;
+  spaces_every?: SpaceWhereInput;
+  spaces_some?: SpaceWhereInput;
+  spaces_none?: SpaceWhereInput;
   AND?: GameWhereInput[] | GameWhereInput;
   OR?: GameWhereInput[] | GameWhereInput;
   NOT?: GameWhereInput[] | GameWhereInput;
+}
+
+export interface SpaceWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  index?: Int;
+  index_not?: Int;
+  index_in?: Int[] | Int;
+  index_not_in?: Int[] | Int;
+  index_lt?: Int;
+  index_lte?: Int;
+  index_gt?: Int;
+  index_gte?: Int;
+  game?: GameWhereInput;
+  players_every?: PlayerWhereInput;
+  players_some?: PlayerWhereInput;
+  players_none?: PlayerWhereInput;
+  AND?: SpaceWhereInput[] | SpaceWhereInput;
+  OR?: SpaceWhereInput[] | SpaceWhereInput;
+  NOT?: SpaceWhereInput[] | SpaceWhereInput;
 }
 
 export type PlayerWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
+export type SpaceWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
 export interface GameCreateInput {
   players?: PlayerCreateManyWithoutGameInput;
+  spaces?: SpaceCreateManyWithoutGameInput;
 }
 
 export interface PlayerCreateManyWithoutGameInput {
@@ -240,10 +334,60 @@ export interface PlayerCreateManyWithoutGameInput {
 
 export interface PlayerCreateWithoutGameInput {
   name: String;
+  space?: SpaceCreateOneWithoutPlayersInput;
+}
+
+export interface SpaceCreateOneWithoutPlayersInput {
+  create?: SpaceCreateWithoutPlayersInput;
+  connect?: SpaceWhereUniqueInput;
+}
+
+export interface SpaceCreateWithoutPlayersInput {
+  index: Int;
+  game: GameCreateOneWithoutSpacesInput;
+}
+
+export interface GameCreateOneWithoutSpacesInput {
+  create?: GameCreateWithoutSpacesInput;
+  connect?: GameWhereUniqueInput;
+}
+
+export interface GameCreateWithoutSpacesInput {
+  players?: PlayerCreateManyWithoutGameInput;
+}
+
+export interface SpaceCreateManyWithoutGameInput {
+  create?: SpaceCreateWithoutGameInput[] | SpaceCreateWithoutGameInput;
+  connect?: SpaceWhereUniqueInput[] | SpaceWhereUniqueInput;
+}
+
+export interface SpaceCreateWithoutGameInput {
+  index: Int;
+  players?: PlayerCreateManyWithoutSpaceInput;
+}
+
+export interface PlayerCreateManyWithoutSpaceInput {
+  create?: PlayerCreateWithoutSpaceInput[] | PlayerCreateWithoutSpaceInput;
+  connect?: PlayerWhereUniqueInput[] | PlayerWhereUniqueInput;
+}
+
+export interface PlayerCreateWithoutSpaceInput {
+  name: String;
+  game: GameCreateOneWithoutPlayersInput;
+}
+
+export interface GameCreateOneWithoutPlayersInput {
+  create?: GameCreateWithoutPlayersInput;
+  connect?: GameWhereUniqueInput;
+}
+
+export interface GameCreateWithoutPlayersInput {
+  spaces?: SpaceCreateManyWithoutGameInput;
 }
 
 export interface GameUpdateInput {
   players?: PlayerUpdateManyWithoutGameInput;
+  spaces?: SpaceUpdateManyWithoutGameInput;
 }
 
 export interface PlayerUpdateManyWithoutGameInput {
@@ -271,6 +415,42 @@ export interface PlayerUpdateWithWhereUniqueWithoutGameInput {
 
 export interface PlayerUpdateWithoutGameDataInput {
   name?: String;
+  space?: SpaceUpdateOneWithoutPlayersInput;
+}
+
+export interface SpaceUpdateOneWithoutPlayersInput {
+  create?: SpaceCreateWithoutPlayersInput;
+  update?: SpaceUpdateWithoutPlayersDataInput;
+  upsert?: SpaceUpsertWithoutPlayersInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: SpaceWhereUniqueInput;
+}
+
+export interface SpaceUpdateWithoutPlayersDataInput {
+  index?: Int;
+  game?: GameUpdateOneRequiredWithoutSpacesInput;
+}
+
+export interface GameUpdateOneRequiredWithoutSpacesInput {
+  create?: GameCreateWithoutSpacesInput;
+  update?: GameUpdateWithoutSpacesDataInput;
+  upsert?: GameUpsertWithoutSpacesInput;
+  connect?: GameWhereUniqueInput;
+}
+
+export interface GameUpdateWithoutSpacesDataInput {
+  players?: PlayerUpdateManyWithoutGameInput;
+}
+
+export interface GameUpsertWithoutSpacesInput {
+  update: GameUpdateWithoutSpacesDataInput;
+  create: GameCreateWithoutSpacesInput;
+}
+
+export interface SpaceUpsertWithoutPlayersInput {
+  update: SpaceUpdateWithoutPlayersDataInput;
+  create: SpaceCreateWithoutPlayersInput;
 }
 
 export interface PlayerUpsertWithWhereUniqueWithoutGameInput {
@@ -322,26 +502,157 @@ export interface PlayerUpdateManyDataInput {
   name?: String;
 }
 
-export interface PlayerCreateInput {
-  name: String;
-  game: GameCreateOneWithoutPlayersInput;
+export interface SpaceUpdateManyWithoutGameInput {
+  create?: SpaceCreateWithoutGameInput[] | SpaceCreateWithoutGameInput;
+  delete?: SpaceWhereUniqueInput[] | SpaceWhereUniqueInput;
+  connect?: SpaceWhereUniqueInput[] | SpaceWhereUniqueInput;
+  set?: SpaceWhereUniqueInput[] | SpaceWhereUniqueInput;
+  disconnect?: SpaceWhereUniqueInput[] | SpaceWhereUniqueInput;
+  update?:
+    | SpaceUpdateWithWhereUniqueWithoutGameInput[]
+    | SpaceUpdateWithWhereUniqueWithoutGameInput;
+  upsert?:
+    | SpaceUpsertWithWhereUniqueWithoutGameInput[]
+    | SpaceUpsertWithWhereUniqueWithoutGameInput;
+  deleteMany?: SpaceScalarWhereInput[] | SpaceScalarWhereInput;
+  updateMany?:
+    | SpaceUpdateManyWithWhereNestedInput[]
+    | SpaceUpdateManyWithWhereNestedInput;
 }
 
-export interface GameCreateOneWithoutPlayersInput {
-  connect?: GameWhereUniqueInput;
+export interface SpaceUpdateWithWhereUniqueWithoutGameInput {
+  where: SpaceWhereUniqueInput;
+  data: SpaceUpdateWithoutGameDataInput;
 }
 
-export interface PlayerUpdateInput {
+export interface SpaceUpdateWithoutGameDataInput {
+  index?: Int;
+  players?: PlayerUpdateManyWithoutSpaceInput;
+}
+
+export interface PlayerUpdateManyWithoutSpaceInput {
+  create?: PlayerCreateWithoutSpaceInput[] | PlayerCreateWithoutSpaceInput;
+  delete?: PlayerWhereUniqueInput[] | PlayerWhereUniqueInput;
+  connect?: PlayerWhereUniqueInput[] | PlayerWhereUniqueInput;
+  set?: PlayerWhereUniqueInput[] | PlayerWhereUniqueInput;
+  disconnect?: PlayerWhereUniqueInput[] | PlayerWhereUniqueInput;
+  update?:
+    | PlayerUpdateWithWhereUniqueWithoutSpaceInput[]
+    | PlayerUpdateWithWhereUniqueWithoutSpaceInput;
+  upsert?:
+    | PlayerUpsertWithWhereUniqueWithoutSpaceInput[]
+    | PlayerUpsertWithWhereUniqueWithoutSpaceInput;
+  deleteMany?: PlayerScalarWhereInput[] | PlayerScalarWhereInput;
+  updateMany?:
+    | PlayerUpdateManyWithWhereNestedInput[]
+    | PlayerUpdateManyWithWhereNestedInput;
+}
+
+export interface PlayerUpdateWithWhereUniqueWithoutSpaceInput {
+  where: PlayerWhereUniqueInput;
+  data: PlayerUpdateWithoutSpaceDataInput;
+}
+
+export interface PlayerUpdateWithoutSpaceDataInput {
   name?: String;
   game?: GameUpdateOneRequiredWithoutPlayersInput;
 }
 
 export interface GameUpdateOneRequiredWithoutPlayersInput {
+  create?: GameCreateWithoutPlayersInput;
+  update?: GameUpdateWithoutPlayersDataInput;
+  upsert?: GameUpsertWithoutPlayersInput;
   connect?: GameWhereUniqueInput;
+}
+
+export interface GameUpdateWithoutPlayersDataInput {
+  spaces?: SpaceUpdateManyWithoutGameInput;
+}
+
+export interface GameUpsertWithoutPlayersInput {
+  update: GameUpdateWithoutPlayersDataInput;
+  create: GameCreateWithoutPlayersInput;
+}
+
+export interface PlayerUpsertWithWhereUniqueWithoutSpaceInput {
+  where: PlayerWhereUniqueInput;
+  update: PlayerUpdateWithoutSpaceDataInput;
+  create: PlayerCreateWithoutSpaceInput;
+}
+
+export interface SpaceUpsertWithWhereUniqueWithoutGameInput {
+  where: SpaceWhereUniqueInput;
+  update: SpaceUpdateWithoutGameDataInput;
+  create: SpaceCreateWithoutGameInput;
+}
+
+export interface SpaceScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  index?: Int;
+  index_not?: Int;
+  index_in?: Int[] | Int;
+  index_not_in?: Int[] | Int;
+  index_lt?: Int;
+  index_lte?: Int;
+  index_gt?: Int;
+  index_gte?: Int;
+  AND?: SpaceScalarWhereInput[] | SpaceScalarWhereInput;
+  OR?: SpaceScalarWhereInput[] | SpaceScalarWhereInput;
+  NOT?: SpaceScalarWhereInput[] | SpaceScalarWhereInput;
+}
+
+export interface SpaceUpdateManyWithWhereNestedInput {
+  where: SpaceScalarWhereInput;
+  data: SpaceUpdateManyDataInput;
+}
+
+export interface SpaceUpdateManyDataInput {
+  index?: Int;
+}
+
+export interface PlayerCreateInput {
+  name: String;
+  game: GameCreateOneWithoutPlayersInput;
+  space?: SpaceCreateOneWithoutPlayersInput;
+}
+
+export interface PlayerUpdateInput {
+  name?: String;
+  game?: GameUpdateOneRequiredWithoutPlayersInput;
+  space?: SpaceUpdateOneWithoutPlayersInput;
 }
 
 export interface PlayerUpdateManyMutationInput {
   name?: String;
+}
+
+export interface SpaceCreateInput {
+  index: Int;
+  game: GameCreateOneWithoutSpacesInput;
+  players?: PlayerCreateManyWithoutSpaceInput;
+}
+
+export interface SpaceUpdateInput {
+  index?: Int;
+  game?: GameUpdateOneRequiredWithoutSpacesInput;
+  players?: PlayerUpdateManyWithoutSpaceInput;
+}
+
+export interface SpaceUpdateManyMutationInput {
+  index?: Int;
 }
 
 export interface GameSubscriptionWhereInput {
@@ -366,6 +677,17 @@ export interface PlayerSubscriptionWhereInput {
   NOT?: PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput;
 }
 
+export interface SpaceSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: SpaceWhereInput;
+  AND?: SpaceSubscriptionWhereInput[] | SpaceSubscriptionWhereInput;
+  OR?: SpaceSubscriptionWhereInput[] | SpaceSubscriptionWhereInput;
+  NOT?: SpaceSubscriptionWhereInput[] | SpaceSubscriptionWhereInput;
+}
+
 export interface NodeNode {
   id: ID_Output;
 }
@@ -380,6 +702,17 @@ export interface GamePromise extends Promise<Game>, Fragmentable {
     args?: {
       where?: PlayerWhereInput;
       orderBy?: PlayerOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  spaces: <T = FragmentableArray<Space>>(
+    args?: {
+      where?: SpaceWhereInput;
+      orderBy?: SpaceOrderByInput;
       skip?: Int;
       after?: String;
       before?: String;
@@ -404,6 +737,17 @@ export interface GameSubscription
       last?: Int;
     }
   ) => T;
+  spaces: <T = Promise<AsyncIterator<SpaceSubscription>>>(
+    args?: {
+      where?: SpaceWhereInput;
+      orderBy?: SpaceOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface Player {
@@ -415,6 +759,7 @@ export interface PlayerPromise extends Promise<Player>, Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   game: <T = GamePromise>() => T;
+  space: <T = SpacePromise>() => T;
 }
 
 export interface PlayerSubscription
@@ -423,6 +768,48 @@ export interface PlayerSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   game: <T = GameSubscription>() => T;
+  space: <T = SpaceSubscription>() => T;
+}
+
+export interface Space {
+  id: ID_Output;
+  index: Int;
+}
+
+export interface SpacePromise extends Promise<Space>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  index: () => Promise<Int>;
+  game: <T = GamePromise>() => T;
+  players: <T = FragmentableArray<Player>>(
+    args?: {
+      where?: PlayerWhereInput;
+      orderBy?: PlayerOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface SpaceSubscription
+  extends Promise<AsyncIterator<Space>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  index: () => Promise<AsyncIterator<Int>>;
+  game: <T = GameSubscription>() => T;
+  players: <T = Promise<AsyncIterator<PlayerSubscription>>>(
+    args?: {
+      where?: PlayerWhereInput;
+      orderBy?: PlayerOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface GameConnection {
@@ -556,6 +943,60 @@ export interface AggregatePlayerSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface SpaceConnection {
+  pageInfo: PageInfo;
+  edges: SpaceEdge[];
+}
+
+export interface SpaceConnectionPromise
+  extends Promise<SpaceConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<SpaceEdge>>() => T;
+  aggregate: <T = AggregateSpacePromise>() => T;
+}
+
+export interface SpaceConnectionSubscription
+  extends Promise<AsyncIterator<SpaceConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<SpaceEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateSpaceSubscription>() => T;
+}
+
+export interface SpaceEdge {
+  node: Space;
+  cursor: String;
+}
+
+export interface SpaceEdgePromise extends Promise<SpaceEdge>, Fragmentable {
+  node: <T = SpacePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface SpaceEdgeSubscription
+  extends Promise<AsyncIterator<SpaceEdge>>,
+    Fragmentable {
+  node: <T = SpaceSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateSpace {
+  count: Int;
+}
+
+export interface AggregateSpacePromise
+  extends Promise<AggregateSpace>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateSpaceSubscription
+  extends Promise<AsyncIterator<AggregateSpace>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface BatchPayload {
   count: Long;
 }
@@ -657,6 +1098,50 @@ export interface PlayerPreviousValuesSubscription
   name: () => Promise<AsyncIterator<String>>;
 }
 
+export interface SpaceSubscriptionPayload {
+  mutation: MutationType;
+  node: Space;
+  updatedFields: String[];
+  previousValues: SpacePreviousValues;
+}
+
+export interface SpaceSubscriptionPayloadPromise
+  extends Promise<SpaceSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = SpacePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = SpacePreviousValuesPromise>() => T;
+}
+
+export interface SpaceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<SpaceSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = SpaceSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = SpacePreviousValuesSubscription>() => T;
+}
+
+export interface SpacePreviousValues {
+  id: ID_Output;
+  index: Int;
+}
+
+export interface SpacePreviousValuesPromise
+  extends Promise<SpacePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  index: () => Promise<Int>;
+}
+
+export interface SpacePreviousValuesSubscription
+  extends Promise<AsyncIterator<SpacePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  index: () => Promise<AsyncIterator<Int>>;
+}
+
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
@@ -691,6 +1176,10 @@ export const models: Model[] = [
   },
   {
     name: "Player",
+    embedded: false
+  },
+  {
+    name: "Space",
     embedded: false
   }
 ];
