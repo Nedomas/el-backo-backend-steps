@@ -5,6 +5,7 @@ const createGame = require('./resolvers/Mutation/createGame')
 const typeDefs = gql`
   type Query {
     hello: String
+    game(id: ID!): Game!
   }
 
   type Game {
@@ -37,6 +38,9 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     hello: () => 'world',
+    game(root, args, context) {
+      return context.prisma.game(args)
+    },
   },
   Player: {
     space(root, args, context) {
