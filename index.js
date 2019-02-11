@@ -22,6 +22,7 @@ const typeDefs = gql`
   type Player {
     id: ID!
     name: String!
+    space: Space!
   }
 
   type Mutation {
@@ -36,6 +37,13 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     hello: () => 'world',
+  },
+  Player: {
+    space(root, args, context) {
+      return context.prisma.player({
+        id: root.id
+      }).space()
+    },
   },
   Game: {
     players(root, args, context) {
