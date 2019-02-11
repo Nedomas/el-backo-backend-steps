@@ -191,6 +191,8 @@ export type PlayerOrderByInput =
   | "id_DESC"
   | "name_ASC"
   | "name_DESC"
+  | "color_ASC"
+  | "color_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -251,6 +253,20 @@ export interface PlayerWhereInput {
   name_not_ends_with?: String;
   game?: GameWhereInput;
   space?: SpaceWhereInput;
+  color?: String;
+  color_not?: String;
+  color_in?: String[] | String;
+  color_not_in?: String[] | String;
+  color_lt?: String;
+  color_lte?: String;
+  color_gt?: String;
+  color_gte?: String;
+  color_contains?: String;
+  color_not_contains?: String;
+  color_starts_with?: String;
+  color_not_starts_with?: String;
+  color_ends_with?: String;
+  color_not_ends_with?: String;
   AND?: PlayerWhereInput[] | PlayerWhereInput;
   OR?: PlayerWhereInput[] | PlayerWhereInput;
   NOT?: PlayerWhereInput[] | PlayerWhereInput;
@@ -335,6 +351,7 @@ export interface PlayerCreateManyWithoutGameInput {
 export interface PlayerCreateWithoutGameInput {
   name: String;
   space?: SpaceCreateOneWithoutPlayersInput;
+  color?: String;
 }
 
 export interface SpaceCreateOneWithoutPlayersInput {
@@ -374,6 +391,7 @@ export interface PlayerCreateManyWithoutSpaceInput {
 export interface PlayerCreateWithoutSpaceInput {
   name: String;
   game: GameCreateOneWithoutPlayersInput;
+  color?: String;
 }
 
 export interface GameCreateOneWithoutPlayersInput {
@@ -416,6 +434,7 @@ export interface PlayerUpdateWithWhereUniqueWithoutGameInput {
 export interface PlayerUpdateWithoutGameDataInput {
   name?: String;
   space?: SpaceUpdateOneWithoutPlayersInput;
+  color?: String;
 }
 
 export interface SpaceUpdateOneWithoutPlayersInput {
@@ -488,6 +507,20 @@ export interface PlayerScalarWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
+  color?: String;
+  color_not?: String;
+  color_in?: String[] | String;
+  color_not_in?: String[] | String;
+  color_lt?: String;
+  color_lte?: String;
+  color_gt?: String;
+  color_gte?: String;
+  color_contains?: String;
+  color_not_contains?: String;
+  color_starts_with?: String;
+  color_not_starts_with?: String;
+  color_ends_with?: String;
+  color_not_ends_with?: String;
   AND?: PlayerScalarWhereInput[] | PlayerScalarWhereInput;
   OR?: PlayerScalarWhereInput[] | PlayerScalarWhereInput;
   NOT?: PlayerScalarWhereInput[] | PlayerScalarWhereInput;
@@ -500,6 +533,7 @@ export interface PlayerUpdateManyWithWhereNestedInput {
 
 export interface PlayerUpdateManyDataInput {
   name?: String;
+  color?: String;
 }
 
 export interface SpaceUpdateManyWithoutGameInput {
@@ -556,6 +590,7 @@ export interface PlayerUpdateWithWhereUniqueWithoutSpaceInput {
 export interface PlayerUpdateWithoutSpaceDataInput {
   name?: String;
   game?: GameUpdateOneRequiredWithoutPlayersInput;
+  color?: String;
 }
 
 export interface GameUpdateOneRequiredWithoutPlayersInput {
@@ -627,16 +662,19 @@ export interface PlayerCreateInput {
   name: String;
   game: GameCreateOneWithoutPlayersInput;
   space?: SpaceCreateOneWithoutPlayersInput;
+  color?: String;
 }
 
 export interface PlayerUpdateInput {
   name?: String;
   game?: GameUpdateOneRequiredWithoutPlayersInput;
   space?: SpaceUpdateOneWithoutPlayersInput;
+  color?: String;
 }
 
 export interface PlayerUpdateManyMutationInput {
   name?: String;
+  color?: String;
 }
 
 export interface SpaceCreateInput {
@@ -753,6 +791,7 @@ export interface GameSubscription
 export interface Player {
   id: ID_Output;
   name: String;
+  color?: String;
 }
 
 export interface PlayerPromise extends Promise<Player>, Fragmentable {
@@ -760,6 +799,7 @@ export interface PlayerPromise extends Promise<Player>, Fragmentable {
   name: () => Promise<String>;
   game: <T = GamePromise>() => T;
   space: <T = SpacePromise>() => T;
+  color: () => Promise<String>;
 }
 
 export interface PlayerSubscription
@@ -769,6 +809,7 @@ export interface PlayerSubscription
   name: () => Promise<AsyncIterator<String>>;
   game: <T = GameSubscription>() => T;
   space: <T = SpaceSubscription>() => T;
+  color: () => Promise<AsyncIterator<String>>;
 }
 
 export interface Space {
@@ -1082,6 +1123,7 @@ export interface PlayerSubscriptionPayloadSubscription
 export interface PlayerPreviousValues {
   id: ID_Output;
   name: String;
+  color?: String;
 }
 
 export interface PlayerPreviousValuesPromise
@@ -1089,6 +1131,7 @@ export interface PlayerPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+  color: () => Promise<String>;
 }
 
 export interface PlayerPreviousValuesSubscription
@@ -1096,6 +1139,7 @@ export interface PlayerPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+  color: () => Promise<AsyncIterator<String>>;
 }
 
 export interface SpaceSubscriptionPayload {

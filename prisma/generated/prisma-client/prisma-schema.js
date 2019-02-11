@@ -197,6 +197,7 @@ type Player {
   name: String!
   game: Game!
   space: Space
+  color: String
 }
 
 type PlayerConnection {
@@ -209,6 +210,7 @@ input PlayerCreateInput {
   name: String!
   game: GameCreateOneWithoutPlayersInput!
   space: SpaceCreateOneWithoutPlayersInput
+  color: String
 }
 
 input PlayerCreateManyWithoutGameInput {
@@ -224,11 +226,13 @@ input PlayerCreateManyWithoutSpaceInput {
 input PlayerCreateWithoutGameInput {
   name: String!
   space: SpaceCreateOneWithoutPlayersInput
+  color: String
 }
 
 input PlayerCreateWithoutSpaceInput {
   name: String!
   game: GameCreateOneWithoutPlayersInput!
+  color: String
 }
 
 type PlayerEdge {
@@ -241,6 +245,8 @@ enum PlayerOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  color_ASC
+  color_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -250,6 +256,7 @@ enum PlayerOrderByInput {
 type PlayerPreviousValues {
   id: ID!
   name: String!
+  color: String
 }
 
 input PlayerScalarWhereInput {
@@ -281,6 +288,20 @@ input PlayerScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  color: String
+  color_not: String
+  color_in: [String!]
+  color_not_in: [String!]
+  color_lt: String
+  color_lte: String
+  color_gt: String
+  color_gte: String
+  color_contains: String
+  color_not_contains: String
+  color_starts_with: String
+  color_not_starts_with: String
+  color_ends_with: String
+  color_not_ends_with: String
   AND: [PlayerScalarWhereInput!]
   OR: [PlayerScalarWhereInput!]
   NOT: [PlayerScalarWhereInput!]
@@ -308,14 +329,17 @@ input PlayerUpdateInput {
   name: String
   game: GameUpdateOneRequiredWithoutPlayersInput
   space: SpaceUpdateOneWithoutPlayersInput
+  color: String
 }
 
 input PlayerUpdateManyDataInput {
   name: String
+  color: String
 }
 
 input PlayerUpdateManyMutationInput {
   name: String
+  color: String
 }
 
 input PlayerUpdateManyWithoutGameInput {
@@ -350,11 +374,13 @@ input PlayerUpdateManyWithWhereNestedInput {
 input PlayerUpdateWithoutGameDataInput {
   name: String
   space: SpaceUpdateOneWithoutPlayersInput
+  color: String
 }
 
 input PlayerUpdateWithoutSpaceDataInput {
   name: String
   game: GameUpdateOneRequiredWithoutPlayersInput
+  color: String
 }
 
 input PlayerUpdateWithWhereUniqueWithoutGameInput {
@@ -410,6 +436,20 @@ input PlayerWhereInput {
   name_not_ends_with: String
   game: GameWhereInput
   space: SpaceWhereInput
+  color: String
+  color_not: String
+  color_in: [String!]
+  color_not_in: [String!]
+  color_lt: String
+  color_lte: String
+  color_gt: String
+  color_gte: String
+  color_contains: String
+  color_not_contains: String
+  color_starts_with: String
+  color_not_starts_with: String
+  color_ends_with: String
+  color_not_ends_with: String
   AND: [PlayerWhereInput!]
   OR: [PlayerWhereInput!]
   NOT: [PlayerWhereInput!]

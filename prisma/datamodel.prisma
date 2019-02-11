@@ -9,6 +9,7 @@ type Player {
   name: String!
   game: Game!
   space: Space
+  color: String
 }
 
 type Space {
