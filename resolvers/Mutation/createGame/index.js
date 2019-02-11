@@ -1,6 +1,15 @@
 const _ = require('lodash')
 const { forEachSeries } = require('p-iteration')
 
+const PLAYER_COLORS = [
+  '#3276EB',
+  '#F9324C',
+  '#2CA360',
+  '#FBB813',
+  '#AB6231',
+  '#E051E5',
+]
+
 module.exports = async (root, args, context) => {
   const game = await context.prisma.createGame(
     {
@@ -10,7 +19,10 @@ module.exports = async (root, args, context) => {
         })),
       },
       players: {
-        create: args.players,
+        create: _.map(args.players, (player, index) => ({
+          ...player,
+          color: PLAYER_COLORS[index],
+        })),
       }
     },
   )

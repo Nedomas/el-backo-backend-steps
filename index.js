@@ -24,6 +24,7 @@ const typeDefs = gql`
     id: ID!
     name: String!
     space: Space!
+    color: String
   }
 
   type Mutation {
